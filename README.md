@@ -16,7 +16,8 @@ https://www.youtube.com/watch?v=n6kS5R6jKuk - steps
 2. `kubectl get services -n monitoring` - monitoring services
 3. `docker exec -it minikube /bin/sh` + `docker ps` - list monitoring containers
 4. `kubectl get pvc -n monitoring` - CAPACITY 8Gi
-5. `kubectl get pv -n monitoring` - 
+5. `kubectl get pv -n monitoring`
+
 
 ### Grafana Install:
 1. `helm repo add grafana https://grafana.github.io/helm-charts` - 
@@ -35,4 +36,39 @@ https://www.youtube.com/watch?v=n6kS5R6jKuk - steps
 2. `kubectl get services -n monitoring` - monitoring services
 3. `docker exec -it minikube /bin/sh` + `docker ps` - list monitoring containers
 4. `kubectl get pvc -n monitoring` - CAPACITY 8Gi
-5. `kubectl get pv -n monitoring` - 
+5. `kubectl get pv -n monitoring`
+6. ### `minikube service grafana -n monitoring` - open grafana service UI!
+
+
+### Trickster Install:
+1. `helm repo add tricksterproxy https://helm.tricksterproxy.io` - 
+2. `helm repo update` - same as "apt-get update"
+3. `helm pull tricksterproxy/trickster` - donwload trickster-1.5.4.tgz
+4. `tar zxf trickster-1.5.4.tgz` - unzip
+5. `rm trickster-1.5.4.tgz` - delete file
+6. `cp trickster/values.yaml trickster-values.yaml` - copy file
+7. `sudo vi trickster-values.yaml` - change originURL: http://prometheus-server:80 (get dns and port from `kubectl get services -n monitoring`)
+8. `helm upgrade --install --create-namespace --values trickster-values.yaml trickster -n monitoring tricksterproxy/trickster` - install trickster with creating namespace
+    1. Trickster can be accessed via `port:8480` on the following DNS name from within your cluster
+    2. `export POD_NAME=$(kubectl get pods --namespace monitoring -l "app=trickster,component=trickster" -o jsonpath="{.items[0].metadata.name}")` - Get the trickster URL
+    3. `kubectl --namespace monitoring port-forward $POD_NAME 9090`
+
+
+### Trickster Check:
+1. `kubectl get pods -n monitoring` - monitoring pods
+2. `kubectl get services -n monitoring` - monitoring services
+    1. Grafana берёт информацию из trickster сервис (http://trickster:8480), а trickster сервис берёт инфор-ию из http://prometheus-server:80 
+3. `docker exec -it minikube /bin/sh` + `docker ps` - list monitoring containers
+4. `kubectl get pvc -n monitoring` - CAPACITY 8Gi
+5. `kubectl get pv -n monitoring`
+
+
+### Ingress Install:
+1. `touch grafana-ingress.yaml`
+    1. add host: `monitoring.195-208-185-64.sslip.io`
+    2. add ip's: `whitelist-source-range: 80.72.28.185`
+2. `kubectl apply -f grafana-ingress.yaml` - add ingress to cluster (ingress.networking.k8s.io/grafana created)
+3. `` - open ingress url to open Grafana
+4. `kubectl get ingress -n monitoring` - check ingress `host: monitoring.195-208-185-64.sslip.io` and `ports: 80, 443`
+5. `kubectl describe ingress grafana -n monitoring` - ingress describe rules
+6. `kubectl get endpoints -n monitoring` - check endpoints for ingress
