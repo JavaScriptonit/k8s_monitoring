@@ -6,21 +6,21 @@ metadata:
     nginx.ingress.kubernetes.io/whitelist-source-range: 80.72.28.185
     cert-manager.io/issuer: gitlab-issuer
     kubernetes.io/ingress.class: nginx
-  name: grafana
+  name: ingress-nginxservice-a
   namespace: monitoring
 spec:
   rules:
-  - host: monitoring.195-208-185-64.sslip.io  # Укажите свой домен или IP-адрес
+  - host: localhost  # Укажите свой домен или IP-адрес
     http:
       paths:
       - backend:
           service:
-            name: grafana  # Укажите имя сервиса Grafana
+            name: nginxservice  # Укажите имя сервиса Grafana
             port:
               number: 80  # Укажите порт сервиса Grafana
         path: /
         pathType: Prefix   
   tls: 
   - hosts: 
-    - monitoring.195-208-185-64.sslip.io  # Укажите свой домен или IP-адрес
+    - localhost # Укажите свой домен или IP-адрес
     secretName: grafanassl
