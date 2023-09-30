@@ -53,7 +53,6 @@ https://www.youtube.com/watch?v=n6kS5R6jKuk - steps
     2. `export POD_NAME=$(kubectl get pods --namespace monitoring -l "app=trickster,component=trickster" -o jsonpath="{.items[0].metadata.name}")` - Get the trickster URL
     3. `kubectl --namespace monitoring port-forward $POD_NAME 9090`
 
-
 ### Trickster Check:
 1. `kubectl get pods -n monitoring` - monitoring pods
 2. `kubectl get services -n monitoring` - monitoring services
@@ -64,7 +63,7 @@ https://www.youtube.com/watch?v=n6kS5R6jKuk - steps
 
 
 ### Ingress Install:
-1. `touch grafana-ingress.yaml`
+1. `touch grafana-ingress.yaml` 
     1. add host: `monitoring.195-208-185-64.sslip.io`
     2. add ip's: `whitelist-source-range: 80.72.28.185`
 2. `kubectl apply -f grafana-ingress.yaml` - add ingress to cluster (ingress.networking.k8s.io/grafana created) ingress.networking.k8s.io/ingress-nginxservice-a created
@@ -74,5 +73,5 @@ https://www.youtube.com/watch?v=n6kS5R6jKuk - steps
 6. `kubectl get endpoints -n monitoring` - check endpoints for ingress
 7. `kubectl delete ingress grafana -n monitoring` - ingress.networking.k8s.io "grafana" deleted
 
-1. `touch deployment.yaml`
+1. `touch deployment.yaml` - create deployment without HELM
 2. `kubectl apply -f deployment.yaml` - deployment.apps/nginx-deployment created
