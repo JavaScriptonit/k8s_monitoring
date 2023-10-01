@@ -82,3 +82,18 @@ https://www.youtube.com/watch?v=n6kS5R6jKuk - steps
 
 ### Myhelmapp port-forward:
 1. `kubectl --namespace default port-forward service/myhelmapp 8888:80` - url - http://127.0.0.1:8888/, http://127.0.0.1/
+2. `kubectl --namespace prod port-forward service/myhelmapp 8889:80` - url - http://127.0.0.1:8889/
+3. `kubectl --namespace dev port-forward service/myhelmapp 8890:80` - url - http://127.0.0.1:8890/
+
+
+1. `helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx`
+2. `helm repo update`
+3. `kubectl create namespace ingress-nginx`
+4. `helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx`
+5. `kubectl --namespace ingress-nginx get services -o wide -w ingress-nginx-controller` - status
+6. `kubectl get pods -n ingress-nginx`
+7. `helm pull ingress-nginx/ingress-nginx`
+7. `tar zxf ingress-nginx-4.8.0.tgz`
+7. `rm ingress-nginx-4.8.0.tgz`
+8. `cp ingress-nginx/values.yaml ingress-nginx-values.yaml`
+9. `helm upgrade --install --create-namespace --values ingress-nginx-values.yaml ingress-nginx -n ingress-nginx ingress-nginx/ingress-nginx`
