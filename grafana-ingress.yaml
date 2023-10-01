@@ -29,39 +29,44 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: myhelmapp-grafana-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/whitelist-source-range: 80.72.28.185
+    cert-manager.io/issuer: gitlab-issuer
+    kubernetes.io/ingress.class: nginx
+  namespace: monitoring
 spec:
   rules:
     - host: localhost
       http:
         paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: myhelmapp
-                port:
-                  number: 80
-
-          - path: /myhelmapp-dev
-            pathType: Prefix
-            backend:
-              service:
-                name: myhelmapp
-                port:
-                  number: 80
-
-          - path: /myhelmapp-prod
-            pathType: Prefix
-            backend:
-              service:
-                name: myhelmapp
-                port:
-                  number: 80
-
-          # - path: /grafana
+          # - path: /
           #   pathType: Prefix
           #   backend:
           #     service:
-          #       name: grafana
+          #       name: myhelmapp
           #       port:
           #         number: 80
+
+          # - path: /myhelmapp-dev
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: myhelmapp
+          #       port:
+          #         number: 80
+
+          # - path: /myhelmapp-prod
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: myhelmapp
+          #       port:
+          #         number: 80
+
+          - path: /grafana
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 80

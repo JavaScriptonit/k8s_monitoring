@@ -28,7 +28,7 @@ https://www.youtube.com/watch?v=n6kS5R6jKuk - steps
 6. `cp grafana/values.yaml grafana-values.yaml` - copy file
 7. `helm upgrade --install --create-namespace --values grafana-values.yaml grafana -n monitoring grafana/grafana` - install grafana with creating namespace
     1. `kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo` - Get your 'admin' user password
-        1. `QnTLKSwkBERRrvl3RI3XCii9J5ml8g9jyPBmOgiu` - password
+        1. `D5YOr5Ra2KDVcOkLv00uVTgw4tRpb6VaIcR9Y75y` - password
         2. `admin` - login
 
 ### Grafana Check:
@@ -66,12 +66,19 @@ https://www.youtube.com/watch?v=n6kS5R6jKuk - steps
 1. `touch grafana-ingress.yaml` 
     1. add host: `monitoring.195-208-185-64.sslip.io`
     2. add ip's: `whitelist-source-range: 80.72.28.185`
-2. `kubectl apply -f grafana-ingress.yaml` - add ingress to cluster (ingress.networking.k8s.io/grafana created) ingress.networking.k8s.io/ingress-nginxservice-a created
+2. `kubectl apply -f grafana-ingress.yaml -n monitoring` - add ingress to cluster (ingress.networking.k8s.io/grafana created) ingress.networking.k8s.io/ingress-nginxservice-a created
 3. ### `minikube service grafana -n monitoring` - open ingress url to open Grafana and other services
 4. `kubectl get ingress -n monitoring` - check ingress `host: monitoring.195-208-185-64.sslip.io` and `ports: 80, 443`
 5. `kubectl describe ingress grafana -n monitoring` - ingress describe rules
 6. `kubectl get endpoints -n monitoring` - check endpoints for ingress
 7. `kubectl delete ingress grafana -n monitoring` - ingress.networking.k8s.io "grafana" deleted
+    1. `kubectl delete ingress myhelmapp-grafana-ingress -n default` - ingress.networking.k8s.io "myhelmapp-grafana-ingress" deleted
+
 
 1. `touch deployment.yaml` - create deployment without HELM
-2. `kubectl apply -f deployment.yaml` - deployment.apps/nginx-deployment created
+2. `kubectl apply -f deployment.yaml -n monitoring` - deployment.apps/nginx-deployment created
+3. `kubectl delete -f deployment.yaml -n monitoring` - delete deployment
+
+
+### Myhelmapp port-forward:
+1. `kubectl --namespace default port-forward service/myhelmapp 8888:80` - url - http://127.0.0.1:8888/, http://127.0.0.1/
